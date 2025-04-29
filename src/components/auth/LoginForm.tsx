@@ -16,7 +16,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-
 import { Loader2 } from "lucide-react";
 
 interface LoginFormInputs {
@@ -35,19 +34,37 @@ const LoginForm: React.FC = () => {
 
   const onSubmit = async (data: LoginFormInputs) => {
     setIsLoading(true);
-    const result = await createUser(data);
-    setIsLoading(false);
+    try {
+      const result = await createUser(data);
 
-    if (result.success) {
-      toast.success("Login Succesful", {
-        description: result.message || "Welcome!",
-      });
-      login(data);
-    } else {
+      if (result.success) {
+        toast.success("Registration Successful", {
+          description:
+            result.message || "You have been registered and logged in.",
+        });
+        login(data);
+      } else if (
+        !result.success &&
+        result.message?.toLowerCase().includes("already exists")
+      ) {
+        toast.info("Login Successful", {
+          description:
+            result.message || "Welcome back! You are already registered.",
+        });
+        login(data);
+      } else {
+        toast.error("Login Failed", {
+          description: result.message || "An unexpected error occurred.",
+        });
+      }
+    } catch (error) {
+      console.error("Error during login API call:", error);
       toast.error("Login Failed", {
-        description: result.message || "An error occurred during login.",
-        style: { backgroundColor: "red" },
+        description:
+          "Could not connect to the server or an unexpected error occurred.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
