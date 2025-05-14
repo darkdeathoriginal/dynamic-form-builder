@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -25,10 +26,17 @@ export default function RootLayout({
           inter.variable
         )}
       >
+         <ThemeProvider
+            attribute="class"
+            defaultTheme="system" // You can change this to "light" or "dark"
+            enableSystem
+            disableTransitionOnChange
+        >
         <AuthProvider>
           {children}
           <Toaster position="top-right" richColors />
         </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
